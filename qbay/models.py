@@ -12,7 +12,7 @@ db = SQLAlchemy(app)
 
 class User(db.Model):
     username = db.Column(
-        db.String(80), nullable=False)
+        db.String(80) , nullable=False)
     email = db.Column(
         db.String(120), unique=True, nullable=False,
         primary_key=True)
