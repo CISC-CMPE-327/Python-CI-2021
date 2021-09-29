@@ -72,8 +72,5 @@ The `passing` badge on the homepage (in the README file) still points to the ori
 
 ![image](https://user-images.githubusercontent.com/8474647/135193609-eb84b6f7-e825-4555-b096-69c353d4d71b.png)
 
-<p align="center">
-  <img width="800"  src="images/image2.png">
-</p>
 
 
