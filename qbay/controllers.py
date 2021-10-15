@@ -1,5 +1,5 @@
 from flask import render_template, request, session, redirect
-from qbay.models import login, User
+from qbay.models import login, User, register
 
 
 from qbay import app
@@ -100,15 +100,11 @@ def register_post():
 
     if password != password2:
         error_message = "The passwords do not match"
-
-    elif len(email) < 1:
-        error_message = "Email format error"
-
-    elif len(password) < 1:
-        error_message = "Password not strong enough"
     else:
         # use backend api to register the user
-        pass
+        success = register(name, email, password)
+        if not success:
+            error_message = "Registration failed."
     # if there is any error messages when registering new user
     # at the backend, go back to the register page.
     if error_message:
