@@ -29,7 +29,7 @@ def authenticate(inner_function):
                     # if the user exists, call the inner_function
                     # with user as parameter
                     return inner_function(user)
-            except:
+            except Exception:
                 pass
         else:
             # else, redirect to the login page
@@ -80,7 +80,7 @@ def home(user):
     products = [
         {'name': 'prodcut 1', 'price': 10},
         {'name': 'prodcut 2', 'price': 20}
-        ]
+    ]
     return render_template('index.html', user=user, products=products)
 
 
