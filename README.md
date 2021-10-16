@@ -70,7 +70,7 @@ On `register.html` there is also a line:
 ```html
 <h4>{{message}}</h4>
 ```
-This will be replaced by the same named parameter, in this case `message`, in the params of `render_template` function call. If we go back `frontend.py` python code ealier, we see:
+This will be replaced by the same named parameter, in this case `message`, in the params of `render_template` function call. If we go back `controllers.py` python code ealier, we see:
 
 ```python
 @app.route('/register', methods=['GET'])
@@ -82,7 +82,7 @@ def register_get():
 Here the message param is an empty string. So when rendering the template, `{{message}}` will be replaced by an empty string. 
 Then completed the whole registration page will be returned to the browser. That will be the page you saw on the register URL.
 
-Once the client got to the register page, he/she can submit the form with input information. The form by default, after the user clicked the submit button, will be `POST`ed to the same URL, so in this case, 'localhost:8081/register'. Now the server recieves the browswer's request, and need to find the corresponding code fragment to handle the request of route `/register` and method `POST`. It looks up the defined routes, and we have the following match in `frontend.py`:
+Once the client got to the register page, he/she can submit the form with input information. The form by default, after the user clicked the submit button, will be `POST`ed to the same URL, so in this case, 'localhost:8081/register'. Now the server recieves the browswer's request, and need to find the corresponding code fragment to handle the request of route `/register` and method `POST`. It looks up the defined routes, and we have the following match in `controllers.py`:
 
 ```python
 @app.route('/register', methods=['POST'])
