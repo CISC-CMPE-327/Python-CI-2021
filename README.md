@@ -3,74 +3,106 @@
 [![Pytest-All](https://github.com/CISC-CMPE-327/Python-CI-2021/actions/workflows/pytest.yml/badge.svg)](https://github.com/CISC-CMPE-327/Python-CI-2021/actions/workflows/pytest.yml)
 [![Python PEP8](https://github.com/CISC-CMPE-327/Python-CI-2021/actions/workflows/style_check.yml/badge.svg)](https://github.com/CISC-CMPE-327/Python-CI-2021/actions/workflows/style_check.yml)
 
-This folder contains the template for A2 (backend dev). Folder structure:
+### Frontend
+
+In order to understand every single bit of this template, first please try cloning the repository, running it, registering a user, logging in, and logging out to develop a general sense of what is going on: 
 
 ```
-├── LICENSE
-├── README.md
-├── .github
-│   └── workflows
-│       ├── pytest.yml       ======> CI settings for running test automatically (trigger test for commits/pull-requests)
-│       └── style_check.yml  ======> CI settings for checking PEP8 automatically (trigger test for commits/pull-requests)
-├── qbay                 ======> Application source code
-│   ├── __init__.py      ======> Required for a python module (can be empty)
-│   ├── __main__.py      ======> Program entry point
-│   └── models.py        ======> Data models
-├── qbay_test            ======> Testing code
-│   ├── __init__.py      ======> Required for a python module (can be empty)
-│   ├── conftest.py      ======> Code to run before/after all the testing
-│   └── test_models.py   ======> Testing code for models.py
-└── requirements.txt     ======> Dependencies
+python -m qbay 
 ```
 
-To run the application module (make sure you have a python environment of 3.5+)
+Next, try to read the python code from the entry point, starting from `qbay/__main__.py` file. It imports a pre-configured flask application instance from `qbay/__init__.py`. In the init file, `SECRET_KEY` is used to encrypt the session data stored in the client's browser, so one cannot just tell by intercepting your traffice. Usually this shouldn't be hardcoded and read from environment variable during deployment. For the seak of convinience, we hard-code the secret key here as a demo.
 
+When the user type the link `localhost:8081` in the browser, the browser will send a request to the server. The client can type different routes such as `localhost:8081\login` or `localhost:8081\register` with different request methods such as `GET` or `POST`. These different routes will be handled by different python code fragments. And those code fragments are all defined in the `qbay/controllers.py` file. For example:
+
+```python
+@app.route('/register', methods=['GET'])
+def register_get():
+    # templates are stored in the templates folder
+    return render_template('register.html', message='')
 ```
-$ pip install -r requirements.txt
-$ python -m qbay
+
+The first line here defines that if a client request `localhost:8081\register` with the 'GET' method, this fragment of code should handle that request and return the corresponding HTML code to be rendered at the client side. For example, if the user type `localhost:8081\register` on his/her browswer and hit enter, then the browser will send a GET request. The above fragment of code recieve the request, and the last line looks up for a HTMP template named `register.html` in the `qa327.templates` folder.
+```html
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Register{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<h4>{{message}}</h4>
+<form method="post">
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input class="form-control" name="email" id="email" required>
+    <label for="name">Name</label>
+    <input class="form-control" name="name" id="name" required>
+    <label for="password">Password</label>
+    <input class="form-control" type="password" name="password" id="password" required>
+    <label for="password">Confirm Password</label>
+    <input class="form-control" type="password" name="password2" id="password2" required>
+    <input class="btn btn-primary" type="submit" value="Register">
+  <a href='/login' class="btn btn-primary" id="btn-submit" >Login</a>
+  </div>
+</form>
+{% endblock %}
 ```
 
-Currently it shows nothing since it is empty in the `__main__.py` file.
-Database and the tables will be automatically created into a `db.sqlite` file if non-existed.
+Let's break this down. This is the [Jinja Templating format (full synatx documentation here)]{https://jinja.palletsprojects.com/en/2.11.x/templates/}. In contrast to React, Vue or other frameworks, it is a server-side rendering framework. It means that the job of filling the template with the required information is done on the server, and the final html will be sent to the client's browswer. Client side rendering is also becoming very popular, but it is very important to understand how different things work. 
 
-To run testing:
+The firstline calls a base template, if you open it, you will find a large chunk of html code. That is the base template for all webpages so we can share common HTML/CSS/JS code for all templates. In line ~127 of the base.html template, you can find something like:
 
+```html
+    <div class="col-lg-8">
+        {% block content %}{% endblock %}
+    </div>
 ```
-# style check (only show errors)
-flake8 --select=E .  
 
-# run all testing code 
-pytest -s qbay_test
+It defines a block named `content`. This block can be replaced by any block definitions in other templates that use the base template. So in this example, `register.html` defines a block also named `content`, this block will replace the `content` block in the base template. So everything in the content block of `register.html` will be inserted into `base.html`. 
 
+On `register.html` there is also a line: 
+
+```html
+<h4>{{message}}</h4>
 ```
-##  GitHub Actions (for Continuous Integration): :ok_hand:
-With GitHub Actions, you will be able to automatically run all your test cases directly on the cloud, whenever you make changes to your codebase. GitHub actions are available by default. You will be able to use GitHub Actions for your course project. You will have 2,000 minutes test runtime per month for your project. You will find that at your repository homepage there is a tab ‘Actions’. You will be able to find all the logs of all the test runs, and where it broke (using this repo as an example): 
+This will be replaced by the same named parameter, in this case `message`, in the params of `render_template` function call. If we go back `frontend.py` python code ealier, we see:
 
-<p align="center">
-  <img width="800"  src="https://user-images.githubusercontent.com/8474647/135193096-0f2068b9-e3cb-4197-ae8d-91c58f97aba8.png">
-</p>
+```python
+@app.route('/register', methods=['GET'])
+def register_get():
+    # templates are stored in the templates folder
+    return render_template('register.html', message='')
+```
 
-Setting up GitHub Actions workflow for your project is simple. Workflows are defined in yml files. The xxx.yml file in the folder `.github/workflows` define the workflow of your CI process. 
+Here the message param is an empty string. So when rendering the template, `{{message}}` will be replaced by an empty string. 
+Then completed the whole registration page will be returned to the browser. That will be the page you saw on the register URL.
 
-<p align="center">
-  <img width="400"  src="https://user-images.githubusercontent.com/8474647/135193263-1bbf3e17-7d5e-4e2a-b864-3577ee00c5ac.png">
-</p>
+Once the client got to the register page, he/she can submit the form with input information. The form by default, after the user clicked the submit button, will be `POST`ed to the same URL, so in this case, 'localhost:8081/register'. Now the server recieves the browswer's request, and need to find the corresponding code fragment to handle the request of route `/register` and method `POST`. It looks up the defined routes, and we have the following match in `frontend.py`:
 
-As an example, this is a yml file we use here to automatically check the code's style compliance to PEP8.
+```python
+@app.route('/register', methods=['POST'])
+def register_post():
+    email = request.form.get('email')
+    name = request.form.get('name')
+    password = request.form.get('password')
+    password2 = request.form.get('password2')
+    error_message = None
 
-- `name`: the name of your CI process. Can be anything. You name it.
-- `on`: the event for which will trigger your CI process. Here we add push. Means that everytime you push your code to the repository, it will trigger the script to run!
-- `runs-on`: which platform you would like the test case to run on.
-- `steps`: steps to carry out in sequence.
-- `uses`: leverage existing operations defined in github actions. In this example, `actions/checkout@v1` means downloading the code.
-- `name`: give a name to a step. Usually under the name item you will find a `run` item.
-- `run`: the script/command to execute. (in this case, flake8)
+    if password != password2:
+        error_message = "The passwords do not match"
+    else:
+        # use backend api to register the user
+        success = register(name, email, password)
+        if not success:
+            error_message = "Registration failed."
+    # if there is any error messages when registering new user
+    # at the backend, go back to the register page.
+    if error_message:
+        return render_template('register.html', message=error_message)
+    else:
+        return redirect('/login')
+```
 
-These templates provide you a starting point to setup your repository and understand how the workflow works for GitHub Actions (well the other CI platforms all follow a similar idea, under the hood GitHub Actions uses M:heavy_dollar_sign: Azure pipelines). 
-
-The `passing` badge on the homepage (in the README file) still points to the original template. So make sure that you update the link accordingly pointing to your repository.  You can find the link at the Action tab, click on one of the workflow, on the upper right corner, there is a `...` button that shows a `create status badge` menu where it will give you the full markdown link.
-
-![image](https://user-images.githubusercontent.com/8474647/135193609-eb84b6f7-e825-4555-b096-69c353d4d71b.png)
-
-
+So this fragment of code will read the data from the form, as you can tell from the first 4 lines of function `register_post`. Then, it calls a backend function to register the user. If there is any error, the backend will return an error message, describing what is the problem. If there is any error message, we will return the original `register.html` template to the client with the error message replaced the `{{message}}` snippet in the template.
 
