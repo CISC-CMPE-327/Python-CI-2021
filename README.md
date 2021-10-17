@@ -70,7 +70,7 @@ On `register.html` there is also a line:
 ```html
 <h4>{{message}}</h4>
 ```
-This will be replaced by the same named parameter, in this case `message`, in the params of `render_template` function call. If we go back `controllers.py` python code ealier, we see:
+This will be replaced by the same named parameter, in this case `message`, in the params of `render_template` function call. If we go back `controllers.py` python code earlier, we see:
 
 ```python
 @app.route('/register', methods=['GET'])
