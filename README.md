@@ -43,6 +43,10 @@ flake8 --select=E .
 pytest -s qbay_test
 
 ```
+
+For the ORM API of flask+sqlalchemy, more exampales can be found here:
+https://flask-sqlalchemy.palletsprojects.com/en/latest/queries/#insert-update-delete
+
 ##  GitHub Actions (for Continuous Integration): :ok_hand:
 With GitHub Actions, you will be able to automatically run all your test cases directly on the cloud, whenever you make changes to your codebase. GitHub actions are available by default. You will be able to use GitHub Actions for your course project. You will have 2,000 minutes test runtime per month for your project. You will find that at your repository homepage there is a tab ‘Actions’. You will be able to find all the logs of all the test runs, and where it broke (using this repo as an example): 
 
