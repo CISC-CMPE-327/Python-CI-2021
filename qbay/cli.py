@@ -14,6 +14,6 @@ def regsiter_page():
     if password != password_twice:
         print('password entered not the same')
     elif register('default name', email, password):
-        print('registration succceeded')
+        print('registration succeeded')
     else:
         print('regisration failed.')
